@@ -23,3 +23,5 @@ Route::get('/home', 'ItemsController@index')->name('home');
 
 
 Route::post('/item', 'ItemsController@store')->name('item.store');
+Route::patch('/item/{item}', 'ItemsController@update')->name('item.update');
+Route::delete('/item/{item}', 'ItemsController@delete')->name('item.delete');

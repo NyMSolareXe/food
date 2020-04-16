@@ -30,11 +30,27 @@ class ItemsController extends Controller
     public function store(ItemValidate $request)
     {
 
-        Auth::User()->items()->create([
+        $item = Auth::User()->items()->create([
             'item_name' => $request->item_name,
             'item_refresh' => $request->item_refresh,
         ]);
 
-        return redirect()->back();
+        return response()->json(['item' => $item]);
+    }
+
+    public function update(ItemValidate $request, $item_id)
+    {
+        $item = \App\Item::findOrFail($item_id);
+        $item->update($request->validated());
+
+        return response()->json(['item' => $item]);
+    }
+
+    public function delete($item_id)
+    {
+        $item = \App\Item::findOrFail($item_id);
+        $item->delete();
+
+        return response()->json(['item' => $item]);
     }
 }
