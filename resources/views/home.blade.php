@@ -84,7 +84,7 @@
                 <form action="{{route('item.store')}}" method="POST" id="formData">
                     @csrf
 
-                    <input type="text" id="item_id">
+                    <input type="hidden" id="item_id">
 
                     <div class="form-group">
                         <label for="item_name" class="">Item Name:</label>
@@ -98,7 +98,6 @@
                     <div class="form-group">
                         <label for="item_refresh">Buy every:</label>
                         <select class="form-control" name="item_refresh" id="item_refresh">
-                            <option value="AAGB">AAGB</option>
                             @foreach ($data as $item)
                             <option value="+{{$item}}">{{$item}}</option>
                             @endforeach
