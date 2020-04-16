@@ -84,9 +84,11 @@
                 <form action="{{route('item.store')}}" method="POST" id="formData">
                     @csrf
 
+                    <input type="text" id="item_id">
+
                     <div class="form-group">
                         <label for="item_name" class="">Item Name:</label>
-                        <input type="text" name="item_name" id="item_name" class="form-control">
+                        <input type="text" name="item_name" id="item_name" class="form-control" autocomplete="off">
                         <span class="invalid-feedback" role="alert" id="item_nameError">
                             <strong></strong>
                         </span>
@@ -109,7 +111,7 @@
                     <button type="submit" id="formSubmit" class="btn btn-primary btn-block mt-3">Submit</button>
                 </form>
             </div>
-            <div class="modal-footer d-none">
+            <div class="modal-footer d-none pt-4">
                 <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
                 <button class="btn btn-outline-danger btnDelete">Delete</button>
                 <button type="button" class="btn btn-outline-success">Save changes</button>
@@ -124,13 +126,15 @@
     // document.querySelector('#formSubmit').addEventListener('click', addLogic);
     document.querySelector('#newItemBtn').addEventListener('click', addLogic);
     document.querySelector('.list-group').addEventListener('click', clickItems);
-    document.querySelector('#formSubmit').addEventListener('click', submitForm);
+    document.querySelector('#formSubmit').addEventListener('click', addItemSubmit);
+
+    
 
     function clickItems(e) {        
         if(e.target.parentElement.tagName === 'LI') {
-            showEditModal();
+            showEditModal(e.target.getAttribute('item_id'));
         } else if(e.target.tagName === 'LI') {
-            showEditModal();
+            showEditModal(e.target.getAttribute('item_id'));
         }
     }
 
@@ -142,23 +146,29 @@
     }
 
 
-    function showEditModal() {
+    function showEditModal(item_id) {
         $('#exampleModalCenter').modal({backdrop: 'static', keyboard: false});
         document.querySelector('.modal-footer').classList.remove('d-none');
         document.querySelector('#formSubmit').classList.add('d-none');
         document.querySelector('#exampleModalCenterTitle').textContent = 'Edit Item';
+        document.querySelector('#item_id').value = item_id;
     }
+
+
     
 
-    function submitForm(e) {
+    function addItemSubmit(e) {
         document.querySelector('#formSubmit').disabled = true;
-        let formData = new FormData(document.querySelector('#formData'));
+        let formData = {
+            item_name: document.querySelector('#item_name').value,
+            item_refresh: document.querySelector('#item_refresh').value
+        }
         const xhr = new XMLHttpRequest;
 
         xhr.open('POST', `{{route('item.store')}}`, true);
 
         xhr.setRequestHeader('X-CSRF-TOKEN', `{{csrf_token()}}`);
-        // xhr.setRequestHeader('Content-tye', 'application/json');
+        xhr.setRequestHeader('Content-type', 'application/json');
         xhr.setRequestHeader('Accept', 'application/json');
         xhr.onload = function() {
             document.querySelector('#formSubmit').disabled = false;
@@ -173,6 +183,10 @@
                     <span>${item_name}</span><span>${item_refresh}</span>
                 `;
                 myParent.appendChild(li);
+
+                $('#exampleModalCenter').modal('hide');
+                document.querySelector('#item_name').value = '';
+                document.querySelector('#item_refresh').selectedIndex = 0;
 
 
             } else if(this.status === 422) {
@@ -194,7 +208,7 @@
                 
             }
         }
-        xhr.send(formData);
+        xhr.send(JSON.stringify(formData));
     }
 
 
