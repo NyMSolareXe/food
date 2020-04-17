@@ -42,4 +42,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Item::class);
     }
+
+    public function list()
+    {
+        return $this->hasMany(ListModel::class);
+    }
 }

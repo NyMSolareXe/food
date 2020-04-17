@@ -81,6 +81,8 @@
             @yield('content')
         </main>
     </div>
+
+    {{-- @stack('solarScripts') --}}
 </body>
 
 </html>
