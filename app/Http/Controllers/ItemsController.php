@@ -48,8 +48,14 @@ class ItemsController extends Controller
 
     public function delete($item_id)
     {
+        $list = \App\ListModel::where('item_id', $item_id)->where('user_id', Auth::user()->id);
+        $list->delete();
         $item = \App\Item::findOrFail($item_id);
         $item->delete();
+
+
+
+
 
         return response()->json(['item' => $item]);
     }
