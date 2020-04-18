@@ -13,13 +13,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
 
 Auth::routes();
 
-Route::get('/home', 'ItemsController@index')->name('home');
+Route::get('/', 'ItemsController@index')->name('home');
 
 
 Route::post('/item', 'ItemsController@store')->name('item.store');
@@ -31,3 +31,7 @@ Route::delete('/item/{item}', 'ItemsController@delete')->name('item.delete');
 Route::get('/list', 'ListsController@index')->name('list.index');
 Route::post('/list', 'ListsController@store')->name('list.store');
 Route::get('/showOccupied', 'ListsController@showOccupied')->name('list.showOccupied');
+
+
+Route::get('/shopping', 'ShoppingController@index')->name('shopping.index');
+Route::patch('/shopping', 'ShoppingController@update')->name('shopping.update');

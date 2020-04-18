@@ -15,7 +15,7 @@ class UserSeeder extends Seeder
 
         $items = [
             [
-                'name' => 'Noah',
+                // 'name' => 'Noah',
                 'email' => 'Noah',
                 'password' => '$2y$10$pbGioB27dhLaZ3H5SPCjw.9a.vsIYPTWXSvUy.Nd6dR1uEPaj/0kS',
                 'email_verified_at' => now(),

@@ -16,6 +16,7 @@ class CreateListModelsTable extends Migration
         Schema::create('list_models', function (Blueprint $table) {
             $table->id();
             $table->integer('item_id')->nullable();
+            $table->enum('item_picked', ['Y', 'N'])->default('N');
             $table->integer('user_id')->nullable();
             $table->timestamps();
         });

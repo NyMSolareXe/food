@@ -17,7 +17,8 @@ class ListsController extends Controller
     public function index()
     {
         $items = Auth::user()->items()->get();
-        $list = Auth::user()->list()->get();
+        $list = Auth::user()->list()->orderBy('id', 'DESC')->get();
+        // logger($list);
         $listItems = implode(',', Auth::user()->list()->orderBy('item_id', 'ASC')->get()->pluck('item_id')->toArray());
 
 
@@ -61,10 +62,11 @@ class ListsController extends Controller
 
 
 
-
-        $list = Auth::user()->list()->get()->pluck('item_id');
-        $items = \App\Item::whereIn('id', $list)->get();
-
+        $list = Auth::user()->list()->orderBy('id', 'DESC')->get();
+        $items = [];
+        foreach ($list as $list) {
+            $items[] = $list->item;
+        }
 
         return response()->json(['items' => $items]);
     }
@@ -76,5 +78,9 @@ class ListsController extends Controller
 
 
         return response()->json(['items' => $items]);
+    }
+
+    public function clearList()
+    {
     }
 }

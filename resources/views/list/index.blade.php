@@ -4,7 +4,7 @@
 
 <style>
     .list-group li:hover {
-        background: #f4f4f4;
+        /* background: #f4f4f4; */
         /* color: white */
     }
 
@@ -52,7 +52,7 @@
 
                     <input type="hidden" name="item_id_array" id="item_id_array" value="{{$listItems}}">
 
-                    <button class="btn btn-outline-success">Begin Shopping</button>
+                    <a href="{{route('shopping.index')}}" class="btn btn-outline-success">Begin Shopping</a>
 
                 </div>
             </div>
@@ -85,8 +85,11 @@
     aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalCenterTitle">Add New Item</h5>
+            <div class="modal-header d-flex align-items-center" style="position: relative">
+                <h5 class="modal-title" id="exampleModalCenterTitle">All Items</h5>
+                <button class="btn btn-outline-danger" id="removeALlBtn"
+                    style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%)">Remove
+                    All</button>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -119,6 +122,8 @@
 <script>
     document.querySelector('.itemsListener').addEventListener('click', clickItems);
     document.querySelector('#buttonClicked').addEventListener('click', colorItems);
+    document.querySelector('#removeALlBtn').addEventListener('click', removeAll);
+
 
     let itemArray = document.querySelector('#item_id_array');
 
@@ -177,6 +182,14 @@
 
 
 
+    function removeAll() {
+        itemArray.value = '';
+        let allListItems = document.querySelectorAll('.itemsListener li.bg-dark');
+        allListItems.forEach(element => {
+            element.classList.remove('bg-dark', 'text-white');
+        })
+        
+    }
 
 
 
