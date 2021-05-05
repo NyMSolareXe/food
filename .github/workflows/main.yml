@@ -1,0 +1,72 @@
+name: CI
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  code-quality-and-tests:
+    env:
+      REDUCE_LOGS: 0
+    runs-on: ubuntu-latest
+    steps:
+    
+    - uses: actions/checkout@v2
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: 7.2
+        extensions: dom, curl, libxml, mbstring, zip, tidy
+        coverage: none
+        tools: composer:v1
+
+    - name: Get composer cache directory
+      id: composer-cache
+      run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+    - name: Cache dependencies
+      uses: actions/cache@v2
+      with:
+        path: ${{ steps.composer-cache.outputs.dir }}
+        key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+        restore-keys: ${{ runner.os }}-composer-
+
+    - name: Define .env.testing for phpUnit
+      id: env-file-testing
+      env:
+        ENV_TESTING : ${{ secrets.ENV_TESTING }}
+      # THIS WILL BREAK IF YOU HAVE ANY SPACES IN ANY ENV VARIABLES I'M SORRY
+      run: |
+        echo $ENV_TESTING > .env.testing-prep
+        tr ' ' '\n' < .env.testing-prep > .env.testing
+        wc -l .env.testing
+    - name: Composer install
+      run: |
+        composer config -g github-oauth.github.com ${{ secrets.COMPOSER_GITHUB_AUTH_TOKEN }}
+        composer install --ignore-platform-reqs --prefer-dist --no-interaction --no-progress
+    
+
+    - name: run phpstan
+      run: composer run-script analyze
+    - name: Comment PR about code quality
+      uses: thollander/actions-comment-pull-request@master
+      if: ${{ github.event_name == 'pull_request' && failure() }}
+      with:
+        message: 'Code quality checks failed :face_with_thermometer:'
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: run phpunit
+      run: composer run-script test
+    - name: Comment PR about tests failing
+      uses: thollander/actions-comment-pull-request@master
+      if: ${{ github.event_name == 'pull_request' && failure() }}
+      with:
+        message: 'Tests are failing :hammer_and_wrench:'
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Comment PR about success
+      uses: thollander/actions-comment-pull-request@master
+      if: ${{ github.event_name == 'pull_request' && success() }}
+      with:
+        message: 'Code quality and tests passed :shipit:'
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
